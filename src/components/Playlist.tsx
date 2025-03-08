@@ -154,7 +154,7 @@ export default function MusicPlayer({ playlist }: any) {
       <YouTube
         key={videoData[currentIndex].id}
         videoId={videoData[currentIndex].id}
-        opts={{ playerVars: { autoplay: 0, controls: 0 }, host: "https://www.youtube-nocookie.com" }}
+        opts={{ playerVars: { autoplay: 0, controls: 0 } }}
         onReady={onReady}
         onStateChange={onPlayerStateChange}
         style={{
