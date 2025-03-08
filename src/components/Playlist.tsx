@@ -66,6 +66,11 @@ export default function MusicPlayer({ playlist }: any) {
         playerRef.current.pauseVideo();
         setIsUserManuallyPaused(true);
       } else {
+        try {
+          playerRef.current.setVolume(100);
+        } catch (error) {
+          console.error("Playback error on toggle:", error);
+        }
         playerRef.current.playVideo();
         setIsUserManuallyPaused(false);
       }
