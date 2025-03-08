@@ -1,0 +1,39 @@
+{
+    "LSP4Metadata": {
+        "name": "First place! Easy!",
+        "description": "NFT for reaching #1 on the easy ladder!",
+        "links": [
+            {
+                "title": "Twitter",
+                "url": "https://x.com/Kolleger4"
+            }
+        ],
+        "icon": [
+            {
+                "width": 1280,
+                "height": 720,
+                "url": "ipfs://bafkreicbcj2bwbmw2whuogdrdallzu6rxfwmb2we4whqhvh5yixikqqwku",
+                "verification": {
+                    "method": "keccak256(bytes)",
+                    "data": "0x437a6254d1dedaa76ff6ed23d4f5fc27288b9b4b586a8c3bb2cb9088924d01f9"
+                }
+            }
+        ],
+        "images": [ 
+            [
+                {
+                    "width": 1280,
+                    "height": 720,
+                    "url": "ipfs://bafkreicbcj2bwbmw2whuogdrdallzu6rxfwmb2we4whqhvh5yixikqqwku",
+                    "verification": {
+                        "method": "keccak256(bytes)",
+                        "data": "0x437a6254d1dedaa76ff6ed23d4f5fc27288b9b4b586a8c3bb2cb9088924d01f9"
+                    }
+                }
+            ]
+        ],
+        "assets": [ ],
+        "attributes": [
+        ]
+    }
+}
