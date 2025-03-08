@@ -6,88 +6,127 @@ import { PlayArrow, Pause, SkipNext, SkipPrevious } from "@mui/icons-material";
 
 export default function MusicPlayer({ playlist }: any) {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(true);
+  const [isPlaying, setIsPlaying] = useState(false);
   const [videoData, setVideoData] = useState<any[]>([]);
   const playerRef = useRef<any | null>(null);
+  const [isUserManuallyPaused, setIsUserManuallyPaused] = useState(false);
+  const [isPlayerInitialized, setIsPlayerInitialized] = useState(false);
+  const [hasUserInteracted, setHasUserInteracted] = useState(false);
 
   const extractVideoIds = (urls: string[]): any[] => {
     return urls.map((url) => {
-      const parts = url.split("v="); // Split by "v="
-      return parts.length > 1 ? parts[1].substring(0, 11) : null; // Grab the ID after "v=" and limit it to 11 chars
-    }).filter(Boolean); // Filter out null values
+      const parts = url.split("v=");
+      return parts.length > 1 ? parts[1].substring(0, 11) : null;
+    }).filter(Boolean);
   };
 
   useEffect(() => {
+    console.log("useEffect [playlist]: Fetching video titles");
     const fetchVideoTitles = async () => {
       const musicToLoad = playlist.music;
       const videoIds = extractVideoIds(musicToLoad);
       if (!videoIds || videoIds.length < 1) return;
-      const results =
-        ((await Promise.all(
-          videoIds.map(async (video: string) => {
-            try {
-              const response = await fetch(
-                `https://noembed.com/embed?url=https://www.youtube.com/watch?v=${video}`
-              );
-              const data = await response.json();
-              return data.error ? null : { id: video, title: data.title };
-            } catch {
-              return null;
-            }
-          })
-        )) as any[]) || [];
+      const results = (await Promise.all(
+        videoIds.map(async (video: string) => {
+          try {
+            const response = await fetch(
+              `https://noembed.com/embed?url=https://www.youtube.com/watch?v=${video}`
+            );
+            const data = await response.json();
+            return data.error ? null : { id: video, title: data.title };
+          } catch (error) {
+            console.error("Fetch error:", error);
+            return null;
+          }
+        })
+      )) as any[];
       const res = results.filter(Boolean);
-      setVideoData(res); // Remove invalid videos
+      console.log("Fetched videoData:", res);
+      setVideoData(res);
     };
     fetchVideoTitles();
   }, [playlist]);
 
   const onReady = (event: any) => {
-    console.log("Player ready:", event); // Debug log
-    console.log(event);
-    console.log("lol");
+    console.log("onReady: Player initialized, videoId:", videoData[currentIndex]?.id, "isPlaying:", isPlaying, "hasUserInteracted:", hasUserInteracted);
     playerRef.current = event.target;
-    playerRef.current!.setVolume(100);
-    if (isPlaying && videoData.length > 0)
-      playerRef.current.loadVideoById(videoData[currentIndex].id);
+    playerRef.current.setVolume(100);
+    setIsPlayerInitialized(true);
+    if (isPlaying && hasUserInteracted && !isUserManuallyPaused) {
+      console.log("onReady: Auto-playing video ID:", videoData[currentIndex]?.id);
+      event.target.playVideo();
+    }
   };
 
   const togglePlayPause = () => {
-    if (playerRef.current) {
+    if (playerRef.current && isPlayerInitialized) {
+      console.log("togglePlayPause: isPlaying:", isPlaying, "isUserManuallyPaused:", isUserManuallyPaused);
+      setHasUserInteracted(true);
       if (isPlaying) {
         playerRef.current.pauseVideo();
+        setIsUserManuallyPaused(true);
       } else {
         playerRef.current.playVideo();
+        setIsUserManuallyPaused(false);
       }
       setIsPlaying(!isPlaying);
     } else {
-      console.log("Player not ready for play/pause"); // Debug log
+      console.warn("Player not ready or initialized in togglePlayPause");
     }
   };
 
   const nextSong = () => {
     if (videoData.length > 0) {
-      setCurrentIndex((prev) => (prev + 1) % videoData.length);
+      const newIndex = (currentIndex + 1) % videoData.length;
+      console.log("nextSong: Changing index, currentIndex:", currentIndex, "New index:", newIndex);
+      setCurrentIndex(newIndex);
+      setIsUserManuallyPaused(false);
+      setIsPlaying(true);
+      setIsPlayerInitialized(false);
+      setHasUserInteracted(true);
+    } else {
+      console.warn("Cannot proceed to next song: No videos available");
     }
   };
 
   const prevSong = () => {
     if (videoData.length > 0) {
-      setCurrentIndex(
-        (prev) => (prev - 1 + videoData.length) % videoData.length
-      );
+      const newIndex = (currentIndex - 1 + videoData.length) % videoData.length;
+      console.log("prevSong: Changing index, currentIndex:", currentIndex, "New index:", newIndex);
+      setCurrentIndex(newIndex);
+      setIsUserManuallyPaused(false);
+      setIsPlaying(true);
+      setIsPlayerInitialized(false);
+      setHasUserInteracted(true);
+    } else {
+      console.warn("Cannot proceed to previous song: No videos available");
     }
   };
 
-  useEffect(() => {
-    if (playerRef.current && videoData.length > 0) {
-      const pr = playerRef.current;
-      pr.loadVideoById(videoData[currentIndex].id);
-      if (isPlaying) pr.playVideo();
-    } else {
-      console.log("Player not ready or videoData empty"); // Debug log
+  const onPlayerStateChange = (event: any) => {
+    console.log(
+      "onPlayerStateChange: State:",
+      event.data,
+      "isPlaying:",
+      isPlaying,
+      "isUserManuallyPaused:",
+      isUserManuallyPaused,
+      "isPlayerInitialized:",
+      isPlayerInitialized,
+      "currentIndex:",
+      currentIndex
+    );
+    if (isPlayerInitialized) {
+      if (event.data === 1) {
+        setIsPlaying(true); // Playing
+      } else if (event.data === 2) {
+        setIsPlaying(false); // Paused
+      } else if (event.data === 0) {
+        console.log("Video ended, triggering nextSong, currentIndex:", currentIndex);
+        nextSong();
+      }
     }
-  }, [currentIndex, isPlaying, videoData]);
+  };
 
   if (videoData.length === 0) return <p>Loading videos...</p>;
 
@@ -108,19 +147,17 @@ export default function MusicPlayer({ playlist }: any) {
         {videoData[currentIndex].title}
       </h2>
       <YouTube
-        videoId={videoData[0].id} // Use a static initial videoId to avoid re-rendering
-        opts={{ playerVars: { autoplay: 1, controls: 0 } }}
-        onReady={(event: any) => {
-          console.log("YouTube Player is Ready:", event);
-          onReady(event);
-        }}
-        onEnd={nextSong}
+        key={videoData[currentIndex].id}
+        videoId={videoData[currentIndex].id}
+        opts={{ playerVars: { autoplay: 0, controls: 0 }, host: "https://www.youtube-nocookie.com" }}
+        onReady={onReady}
+        onStateChange={onPlayerStateChange}
         style={{
           position: "absolute",
           left: "-9999px",
           width: "1px",
           height: "1px",
-        }} // Off-screen instead of display: none
+        }}
       />
       <div style={{ display: "flex", gap: "16px" }}>
         <Button onClick={prevSong} variant="contained" color="secondary">
