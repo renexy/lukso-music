@@ -8,32 +8,32 @@ import profileSchema from "@erc725/erc725.js/schemas/LSP3ProfileMetadata.json";
 
 export default function App() {
   const { contextAccounts, accounts } = useUpProvider();
-  const [ready, setReady] = useState<boolean>(true);
+  const [ready, setReady] = useState<boolean>(false);
   const [ownerName, setOwnerName] = useState<string>("");
 
-  // useEffect(() => {
-  //   if (
-  //     contextAccounts &&
-  //     contextAccounts.length > 0 &&
-  //     accounts &&
-  //     accounts.length > 0
-  //   ) {
-  //     setReady(true);
+  useEffect(() => {
+    if (
+      contextAccounts &&
+      contextAccounts.length > 0 &&
+      accounts &&
+      accounts.length > 0
+    ) {
+      setReady(true);
 
-  //     setOwnerName(
-  //       contextAccounts[0].substring(0, 3) +
-  //         "..." +
-  //         contextAccounts[0].substring(
-  //           contextAccounts[0].length,
-  //           contextAccounts[0].length - 3
-  //         )
-  //     );
+      setOwnerName(
+        contextAccounts[0].substring(0, 3) +
+          "..." +
+          contextAccounts[0].substring(
+            contextAccounts[0].length,
+            contextAccounts[0].length - 3
+          )
+      );
 
-  //     getProfileData();
-  //   } else {
-  //     setReady(false);
-  //   }
-  // }, [contextAccounts, accounts]);
+      getProfileData();
+    } else {
+      setReady(false);
+    }
+  }, [contextAccounts, accounts]);
 
   const getProfileData = async () => {
     const erc725js = new ERC725(

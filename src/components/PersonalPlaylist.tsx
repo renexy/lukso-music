@@ -165,14 +165,14 @@ export default function PersonalPlaylist({
     setPlaylist(p)
   };
 
-  // if (loading || !contextAddress || !walletAddress) {
-  //   return (
-  //     <div className="flex flex-col flex-[0.9] justify-center items-center">
-  //       <CircularProgress color="secondary" />
-  //       <p className="mt-4 text-[#4F5882]">Loading music</p>
-  //     </div>
-  //   );
-  // }
+  if (loading || !contextAddress || !walletAddress) {
+    return (
+      <div className="flex flex-col flex-[0.9] justify-center items-center">
+        <CircularProgress color="secondary" />
+        <p className="mt-4 text-[#4F5882]">Loading music</p>
+      </div>
+    );
+  }
 
   if (playlist) {
     return <MusicPlayer playlist={playlist}></MusicPlayer>
