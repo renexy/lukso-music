@@ -162,6 +162,8 @@ export default function MusicPlayer({ playlist }: any) {
         style={{
           width: "100%",
           height: "100%",
+          position: 'absolute',
+          left: '-9999px'
         }}
       />
       <div style={{ display: "flex", gap: "16px" }}>
