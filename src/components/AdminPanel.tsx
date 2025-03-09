@@ -16,7 +16,7 @@ export default function AdminPanel({
     <div className="bg-white bg-opacity-95 shadow-lg p-2 rounded-xl h-[85dvh] w-[85dvw] gap-[12px] relative flex flex-col items-center justify-center animate-fadeInSlideUp">
       {value === 0 && (
         <PersonalPlaylist
-          walletAddress={walletAddress}
+          walletAddress={'0x61d397d2c872f521c0a0bcd13d1cb31ec2c8bc05'}
           contextAddress={contextAddress}
         />
       )}

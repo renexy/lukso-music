@@ -51,6 +51,8 @@ export default function MusicPlayer({ playlist }: any) {
     console.log("onReady: Player initialized, videoId:", videoData[currentIndex]?.id, "isPlaying:", isPlaying, "hasUserInteracted:", hasUserInteracted);
     playerRef.current = event.target;
     playerRef.current.setVolume(100);
+    const iframe = playerRef.current.getIframe();
+    iframe.focus()
     setIsPlayerInitialized(true);
     if (isPlaying && hasUserInteracted && !isUserManuallyPaused) {
       console.log("onReady: Auto-playing video ID:", videoData[currentIndex]?.id);
@@ -154,14 +156,12 @@ export default function MusicPlayer({ playlist }: any) {
       <YouTube
         key={videoData[currentIndex].id}
         videoId={videoData[currentIndex].id}
-        opts={{ playerVars: { autoplay: 0, controls: 0 } }}
+        opts={{ playerVars: { autoplay: 0, controls: 0 }, host: "https://www.youtube-nocookie.com" }}
         onReady={onReady}
         onStateChange={onPlayerStateChange}
         style={{
-          position: "absolute",
-          left: "-9999px",
-          width: "1px",
-          height: "1px",
+          width: "100%",
+          height: "100%",
         }}
       />
       <div style={{ display: "flex", gap: "16px" }}>
