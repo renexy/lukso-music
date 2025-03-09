@@ -150,7 +150,7 @@ export default function MusicPlayer({ playlist }: any) {
   };
 
   const onPlayerStateChange = (event: any) => {
-    const states = {
+    const states: any = {
       0: "ENDED",
       1: "PLAYING",
       2: "PAUSED",
