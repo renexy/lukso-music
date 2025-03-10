@@ -200,7 +200,6 @@ export default function MusicPlayer({ playlist }: any) {
       <h2 style={{ textAlign: "center", maxWidth: "400px", color: "#4F5882" }}>
         {videoData[currentIndex].title}
       </h2>
-      <p style={{ color: "yellow", textAlign: "center" }}>{statusMessage}</p>
       <YouTube
         key={videoData[currentIndex].id}
         videoId={videoData[currentIndex].id}
