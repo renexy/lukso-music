@@ -7,7 +7,7 @@ import { ERC725 } from "@erc725/erc725.js";
 import profileSchema from "@erc725/erc725.js/schemas/LSP3ProfileMetadata.json";
 
 export default function App() {
-  const { contextAccounts, accounts } = useUpProvider();
+  const { contextAccounts, accounts, chainId } = useUpProvider();
   const [ready, setReady] = useState<boolean>(false);
   const [ownerName, setOwnerName] = useState<string>("");
 
@@ -39,7 +39,7 @@ export default function App() {
     const erc725js = new ERC725(
       profileSchema,
       contextAccounts[0], // Universal Profile address
-      "https://rpc.testnet.lukso.network",
+      chainId === 42 ? "https://42.rpc.thirdweb.com" : "https://rpc.testnet.lukso.network",
       {
         ipfsGateway: "https://api.universalprofile.cloud/ipfs/",
       }
