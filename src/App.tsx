@@ -39,7 +39,7 @@ export default function App() {
     const erc725js = new ERC725(
       profileSchema,
       contextAccounts[0], // Universal Profile address
-      chainId === 42 ? "https://42.rpc.thirdweb.com" : "https://rpc.testnet.lukso.network",
+      chainId === 42 ? "https://rpc.mainnet.lukso.network" : "https://rpc.testnet.lukso.network",
       {
         ipfsGateway: "https://api.universalprofile.cloud/ipfs/",
       }
